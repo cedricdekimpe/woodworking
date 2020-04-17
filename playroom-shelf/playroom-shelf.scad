@@ -4,6 +4,7 @@ pane_length = 920;
 total_height = 1100;
 
 leg_thickness = 44;
+support_thickness = 27;
 leg_height = total_height - pane_thickness;
 
 front_width = 920;
@@ -44,33 +45,34 @@ module legs() {
 
 module front_support() {
   translate([leg_thickness, 0, 0])
-    cube([front_support_length, leg_thickness, leg_thickness]);
+    cube([front_support_length, support_thickness, support_thickness]);
 }
 
 module back_support() {
-  translate([leg_thickness,sides_width-leg_thickness])
-    cube([back_support_length, leg_thickness, leg_thickness]);
+  translate([leg_thickness,sides_width-support_thickness])
+    cube([back_support_length, support_thickness, support_thickness]);
 }
 
 module left_side_support() {
   translate([0, leg_thickness, 0])
-    cube([leg_thickness, (sides_width-(2*leg_thickness)), leg_thickness]);
+    cube([support_thickness, (sides_width-(2*leg_thickness)), support_thickness]);
 }
 
 module right_side_support() {
-  translate([front_width-leg_thickness, 0])
+color("orange")
+  translate([front_width-support_thickness, 0])
     translate([0, leg_thickness, 0])
-      cube([leg_thickness, (sides_width-(leg_thickness)-chimney_width), leg_thickness]);
+      cube([support_thickness, (sides_width-(leg_thickness)-chimney_width), support_thickness]);
 }
 
 module chimney_right_support() {
-  translate([front_width-leg_thickness-chimney_support_length-leg_thickness, sides_width-chimney_width+leg_thickness])
-    cube([leg_thickness, chimney_support_length, leg_thickness]);
+  translate([front_width-leg_thickness-chimney_support_length-support_thickness, sides_width-chimney_width+leg_thickness])
+    cube([support_thickness, chimney_support_length, support_thickness]);
 }
 
 module chimney_front_support() {
-  translate([front_width-chimney_support_length-leg_thickness, sides_width-chimney_width])
-    cube([chimney_support_length, leg_thickness, leg_thickness]);
+  translate([front_width-chimney_support_length-leg_thickness, sides_width-chimney_width+(leg_thickness-support_thickness)])
+    cube([chimney_support_length, support_thickness, support_thickness]);
 }
 
 module supports() {
@@ -127,21 +129,21 @@ legs();
 // ground support
 supports();
 // middle support
-translate([0, 0, (leg_height-leg_thickness)/2])
+translate([0, 0, (leg_height-support_thickness)/2])
   supports();
 // top support
-translate([0, 0, leg_height-leg_thickness])
+translate([0, 0, leg_height-support_thickness])
   supports();
 
 // ground pane
-translate([0, 0, leg_thickness])
+translate([0, 0, support_thickness])
   difference(){
     top_pane();
     pane_leg_cuts();
   }
 
 // middle pane
-translate([0, 0, (leg_height/2)+(leg_thickness/2)])
+translate([0, 0, (leg_height/2)+(support_thickness/2)])
   difference(){
     top_pane();
     pane_leg_cuts();
