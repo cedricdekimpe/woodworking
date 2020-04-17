@@ -87,6 +87,42 @@ module pane() {
     cube([pane_length, pane_width, pane_thickness]);
 }
 
+module top_pane() {
+  pane();
+  translate([0, pane_width, 0])
+    difference(){
+      color("blue")
+      pane();
+      translate([pane_length-chimney_width+leg_thickness, pane_width-chimney_width+leg_thickness, -pane_thickness/2])
+        // overcut by 50 to avoid rendering issue
+        cube([chimney_width-leg_thickness+50, chimney_width-leg_thickness+50, pane_thickness*2]);
+    }
+}
+
+module leg_cut() {
+  // overcut by 50 to avoid rendering issue
+  cube([leg_thickness, leg_thickness, pane_thickness*2]);
+}
+
+module pane_leg_cuts() {
+  color("black")
+    leg_cut();
+  translate([front_width-leg_thickness, 0])
+    leg_cut();
+  // bottom right leg
+  translate([front_width-leg_thickness-chimney_support_length-leg_thickness, sides_width-leg_thickness])
+    leg_cut();
+  // bottom left leg
+  translate([0, sides_width-leg_thickness])
+    leg_cut();
+  // chimney leg
+  translate([front_width-leg_thickness-chimney_support_length-leg_thickness, sides_width-chimney_width])
+    leg_cut();
+  // chimney side leg
+  translate([front_width-leg_thickness, sides_width-chimney_width])
+    leg_cut();
+}
+
 legs();
 // ground support
 supports();
@@ -97,14 +133,20 @@ translate([0, 0, (leg_height-leg_thickness)/2])
 translate([0, 0, leg_height-leg_thickness])
   supports();
 
-translate([0, 0, total_height-pane_thickness])
-  pane();
-translate([0, pane_width, total_height-pane_thickness])
-  color("blue")
+// ground pane
+translate([0, 0, leg_thickness])
   difference(){
-    pane();
-    translate([pane_length-chimney_width+leg_thickness, pane_width-chimney_width+leg_thickness, -pane_thickness/2])
-      color("red")
-      cube([chimney_width-leg_thickness, chimney_width-leg_thickness, pane_thickness*2]);
-
+    top_pane();
+    pane_leg_cuts();
   }
+
+// middle pane
+translate([0, 0, (leg_height/2)+(leg_thickness/2)])
+  difference(){
+    top_pane();
+    pane_leg_cuts();
+  }
+// top pane
+translate([0, 0, total_height-pane_thickness])
+  top_pane();
+
